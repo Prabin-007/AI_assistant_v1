@@ -1,8 +1,11 @@
+import os 
+
 from openai import OpenAI
 from dotenv import load_dotenv
-import os 
-from tools import TOOLS,FUNCTION_NAME_TO_FUNCTION_MAPPING
-import json
+
+from tools import TOOLS,run_tool
+from Utilities.utilities import log
+
 load_dotenv() # Load environment variables from .env file
 
 client = OpenAI(
@@ -11,6 +14,7 @@ client = OpenAI(
 )
 
 messages=[]
+MAX_ITERATIONS = 5
 
 #can add role system to act in a specific way
 messages.append({
@@ -41,16 +45,17 @@ while True:
     #print(response.model_dump_json(indent=2))
     
     
-    if msg.tool_calls:
+    for step in range(MAX_ITERATIONS):
+        if not msg.tool_calls:
+            break
+        
+        log(f"Step {step + 1}: model requested {len(msg.tool_calls)} tool calls")
         #tool call is requried
         messages.append(msg)
         
         for tool_call in msg.tool_calls:
-            func_name = tool_call.function.name
-            func_args = json.loads(tool_call.function.arguments or "{}")
             
-            fn = FUNCTION_NAME_TO_FUNCTION_MAPPING[func_name]
-            result = fn(**func_args)
+            result = run_tool(tool_call)
             
             messages.append({
                 "role": "tool",
@@ -63,16 +68,23 @@ while True:
         response = client.chat.completions.create(
             model=os.getenv("MODEL"),
             messages=messages,
+            tools=TOOLS,
         )
         
         msg=response.choices[0].message
-         
+    else:
+        fallback = "sorry, I am unable to provide a response at this time."
+        messages.append({
+            "role": "assistant",
+            "content": fallback
+        })
+        print("Assistant: " + fallback)
+        continue
     messages.append({
-        "role": "assistant",
-        "content": msg.content
+        "role" : "assistant",
+        "content" : msg.content
     })
-    
-    print("Assistant:", msg.content)
+    print("Assistant:", msg.content or "") #string + null is invalid, so we use empty string 
             
             
     
