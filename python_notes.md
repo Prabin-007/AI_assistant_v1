@@ -214,6 +214,158 @@ response = requests.get(url)
 
 print(response.text)
 ```
+## 10. `SimpleNamespace`
+
+`SimpleNamespace` is a class from Python's built-in `types` module. It allows us to create objects with attributes without defining a separate class.
+
+### Creating a SimpleNamespace Object
+
+```python
+from types import SimpleNamespace
+
+obj = SimpleNamespace(name="Prabin", age=20)
+
+print(obj.name)  # Prabin
+print(obj.age)   # 20
+```
+
+* `obj` is an object.
+* `name` and `age` are its attributes.
+* We access attributes using the dot (`.`) operator.
+
+### Modifying and Adding Attributes
+
+```python
+obj.name = "Rahul"   # Modify an existing attribute
+obj.city = "Silchar" # Add a new attribute
+
+print(obj.name)  # Rahul
+print(obj.city)  # Silchar
+```
+
+`SimpleNamespace` objects are mutable, meaning their attributes can be modified or added after creation.
+
+### Nested SimpleNamespace Objects
+
+We can create an object inside another object.
+
+```python
+obj = SimpleNamespace(
+    id=None,
+    function=SimpleNamespace(
+        name="",
+        arguments=""
+    )
+)
+```
+
+The structure is:
+
+```text
+obj
+├── id = None
+└── function
+    ├── name = ""
+    └── arguments = ""
+```
+
+Access the attributes using:
+
+```python
+obj.id
+obj.function.name
+obj.function.arguments
+```
+
+For example:
+
+```python
+obj.id = "call_123"
+obj.function.name = "get_city_weather"
+obj.function.arguments = '{"city": "Silchar"}'
+```
+
+### SimpleNamespace vs Dictionary
+
+**Using a dictionary:**
+
+```python
+data = {
+    "name": "Prabin",
+    "age": 20
+}
+
+print(data["name"])
+data["age"] = 21
+```
+
+**Using SimpleNamespace:**
+
+```python
+from types import SimpleNamespace
+
+obj = SimpleNamespace(name="Prabin", age=20)
+
+print(obj.name)
+obj.age = 21
+```
+
+**Key difference:**
+
+* Dictionary: Access values using keys, e.g., `data["name"]`.
+* SimpleNamespace: Access attributes using dot notation, e.g., `obj.name`.
+
+### Converting Between a Dictionary and SimpleNamespace
+
+A `SimpleNamespace` object stores its attributes in an instance dictionary, accessible through `__dict__`.
+
+```python
+from types import SimpleNamespace
+
+obj = SimpleNamespace(name="Prabin", age=20)
+
+data = obj.__dict__
+print(data)  # {'name': 'Prabin', 'age': 20}
+```
+
+We can also create a `SimpleNamespace` from a dictionary using unpacking:
+
+```python
+data = {"name": "Prabin", "age": 20}
+
+obj = SimpleNamespace(**data)
+
+print(obj.name)  # Prabin
+```
+
+### Why We Use SimpleNamespace in Our AI Assistant Project
+
+While streaming an LLM response, a tool call's ID, function name, and arguments may arrive in multiple chunks.
+
+We use `SimpleNamespace` to maintain the collected information for each tool call.
+
+```python
+from types import SimpleNamespace
+
+obj = SimpleNamespace(
+    id=None,
+    function=SimpleNamespace(name="", arguments="")
+)
+
+obj.id = "call_123"
+obj.function.name += "get_city_weather"
+obj.function.arguments += '{"city": "Silchar"}'
+```
+
+Here:
+
+* `id` stores the tool-call ID.
+* `function.name` stores the function name.
+* `function.arguments` stores the arguments as a string.
+* `+=` appends incoming string fragments to the existing values.
+
+**Remember:** `SimpleNamespace` is useful when we want a lightweight object with dynamically accessible attributes without creating a custom class.
+
 
 * `requests.get(url)` sends an HTTP GET request.
 * `response.text` gives the response body as text.

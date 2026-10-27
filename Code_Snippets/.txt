@@ -1,0 +1,28 @@
+#chunk response
+
+ChatCompletionChunk(
+    id='chatcmpl-455',
+    choices=[
+        Choice(
+            delta=ChoiceDelta(
+                audio=None,
+                content='.',
+                function_call=None,
+                refusal=None,
+                role=None,
+                tool_calls=None
+            ),
+            index=0,
+            finish_reason=None,
+            logprobs=None
+        )
+    ],
+    created=1793039303,
+    model='qwen3:4b',
+    object='chat.completion.chunk',
+    moderation=None,
+    obfuscation=None,
+    service_tier=None,
+    system_fingerprint='fp_ollama',
+    usage=None
+)
