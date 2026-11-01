@@ -81,7 +81,8 @@ def test(user_query,documents,top_k=3):
 documents = load_documents(KB_FOLDER)
 documents = add_embeddings(documents)
 
-print(f"Loaded {len(documents)} documents from {KB_FOLDER} and added embeddings.")
+print(documents[0])
+# print(f"Loaded {len(documents)} documents from {KB_FOLDER} and added embeddings.")
 
-user_query ="how to get reimbursement for travel expenses"
-test(user_query,documents,top_k=3)
+# user_query ="how to get reimbursement for travel expenses"
+# test(user_query,documents,top_k=3)
